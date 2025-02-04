@@ -313,7 +313,9 @@ INSERT INTO Persona (nombre, apellido_paterno, apellido_maternos, edad, telefono
 ('alex', 'Rodríguez', 'Hernández', 28, '5559876543', 'Mexicana'),
 ('Carlos', 'Martínez', 'Gómez', 42, '5555555555', 'Mexicana'),
 ('Ana', 'López', 'Sánchez', 31, '5552223333', 'Mexicana'),
-('Pedro', 'Hernández', 'Ramírez', 39, '5554446666', 'Mexicana');
+('Pedro', 'Hernández', 'Ramírez', 39, '5554446666', 'Mexicana'),
+('Ramon', 'García', 'López', 35, '5551234567', 'Mexicana'),
+('Raul', 'Rodríguez', 'Hernández', 28, '5559876543', 'Mexicana');;
 
 -- Insertar en la tabla Rol
 INSERT INTO Rol (nombre) VALUES 

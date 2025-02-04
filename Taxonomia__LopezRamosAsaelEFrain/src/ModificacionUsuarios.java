@@ -1,4 +1,5 @@
 
+import java.awt.List;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.CallableStatement;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -18,15 +20,28 @@ import java.util.UUID;
 /**
  *
  * @author roscr
+ * 
+ * 
+ * 
+ * 
  */
 public class ModificacionUsuarios extends javax.swing.JFrame {
     private InfoCurrentUser infoUsuarioActual;//usuario actual
-    
+    private ArrayList<String> arrayRoles = new ArrayList<>();
     public ModificacionUsuarios(InfoCurrentUser infoUsuarioActual) {
         this.infoUsuarioActual = infoUsuarioActual; //usuario actual
         initComponents();
         this.setLocationRelativeTo(null);
         
+        Eliminar.setEnabled(false);
+        agregarButton.setEnabled(true);
+        btnModificar.setEnabled(false);
+        cancelButton.setEnabled(false);
+        LabelTitle.setVisible(false);
+        labelError.setVisible(false);
+        
+        
+        idPersonaText.setEditable(false);
         mostrarRoles();
         mostrarUsuarios();
     }
@@ -43,7 +58,6 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaUsuarios = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
         agregarButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -51,20 +65,18 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         btnModificar = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        idPersonaDelete = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         idPersonaText = new javax.swing.JTextField();
         emailText = new javax.swing.JTextField();
-        idRolText = new javax.swing.JTextField();
         passwordText = new javax.swing.JPasswordField();
         Eliminar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        cancelDelete = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         nombreText = new javax.swing.JTextField();
+        listRol = new javax.swing.JComboBox<>();
+        LabelTitle = new javax.swing.JLabel();
+        labelError = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaRoles = new javax.swing.JTable();
 
@@ -115,20 +127,16 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         };
         tablaUsuarios.getTableHeader().setResizingAllowed(false);
         tablaUsuarios.getTableHeader().setReorderingAllowed(false);
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaUsuariosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tablaUsuarios);
         if (tablaUsuarios.getColumnModel().getColumnCount() > 0) {
             tablaUsuarios.getColumnModel().getColumn(0).setPreferredWidth(400);
             tablaUsuarios.getColumnModel().getColumn(2).setPreferredWidth(2);
         }
-
-        jButton1.setBackground(new java.awt.Color(0, 0, 204));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Actualizar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         agregarButton.setBackground(new java.awt.Color(0, 204, 51));
         agregarButton.setForeground(new java.awt.Color(0, 0, 0));
@@ -163,7 +171,7 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
             }
         });
 
-        cancelButton.setBackground(new java.awt.Color(255, 0, 51));
+        cancelButton.setBackground(new java.awt.Color(255, 102, 51));
         cancelButton.setForeground(new java.awt.Color(255, 255, 255));
         cancelButton.setText("Cancelar");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -171,16 +179,6 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                 cancelButtonActionPerformed(evt);
             }
         });
-
-        jLabel11.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel11.setText("Eliminar Usuario");
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("ID Persona");
-
-        idPersonaDelete.setBackground(new java.awt.Color(179, 185, 192));
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
@@ -194,8 +192,6 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         });
 
         emailText.setBackground(new java.awt.Color(179, 185, 192));
-
-        idRolText.setBackground(new java.awt.Color(179, 185, 192));
 
         passwordText.setBackground(new java.awt.Color(179, 185, 192));
 
@@ -212,16 +208,7 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Nuevo nombre");
 
-        cancelDelete.setBackground(new java.awt.Color(255, 153, 0));
-        cancelDelete.setForeground(new java.awt.Color(255, 255, 255));
-        cancelDelete.setText("Cancelar");
-        cancelDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelDeleteActionPerformed(evt);
-            }
-        });
-
-        backButton.setBackground(new java.awt.Color(255, 0, 51));
+        backButton.setBackground(new java.awt.Color(255, 204, 0));
         backButton.setForeground(new java.awt.Color(255, 255, 255));
         backButton.setText("Atras");
         backButton.addActionListener(new java.awt.event.ActionListener() {
@@ -241,6 +228,19 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
             }
         });
 
+        listRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        listRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listRolActionPerformed(evt);
+            }
+        });
+
+        LabelTitle.setForeground(new java.awt.Color(0, 0, 204));
+        LabelTitle.setText("Modifique los campos que desea cambiar");
+
+        labelError.setForeground(new java.awt.Color(255, 0, 0));
+        labelError.setText("jLabel4");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -248,6 +248,8 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(labelError)
+                    .addComponent(LabelTitle)
                     .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -259,13 +261,9 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(emailText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idRolText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(159, 159, 159)
-                        .addComponent(btnModificar))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(emailText, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                            .addComponent(listRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(60, 60, 60)
@@ -273,17 +271,12 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                             .addComponent(idPersonaText, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(nombreText, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(cancelDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(33, 33, 33)
-                                .addComponent(idPersonaDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(Eliminar)
+                        .addGap(33, 33, 33)
+                        .addComponent(btnModificar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -293,7 +286,9 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addGap(26, 26, 26)
+                .addGap(3, 3, 3)
+                .addComponent(LabelTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(idPersonaText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -311,23 +306,16 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                     .addComponent(emailText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(idRolText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(26, 26, 26)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(listRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(labelError)
+                .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(btnModificar))
-                .addGap(45, 45, 45)
-                .addComponent(jLabel11)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(idPersonaDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelDelete)
+                    .addComponent(btnModificar)
                     .addComponent(Eliminar))
-                .addGap(24, 24, 24))
+                .addGap(188, 188, 188))
         );
 
         tablaRoles.setBackground(new java.awt.Color(128, 167, 191));
@@ -357,11 +345,8 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(47, 47, 47)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(agregarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(agregarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 794, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 36, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -379,11 +364,9 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                         .addGap(34, 34, 34)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(agregarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(agregarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -404,9 +387,48 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
 
     private void idPersonaTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idPersonaTextActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_idPersonaTextActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+
+        /*idPersonaText.setText(idPersona);
+            passwordText.setText("");
+            emailText.setText(emailUsuario);
+            idPersonaDelete.setText(idPersona);
+            nombreText.setText(nombreUsuario);
+            
+            LabelTitle.setVisible(true);*/
+        
+        String nombre = nombreText.getText().trim();
+        String email = emailText.getText().trim();
+        String pass = new String(passwordText.getPassword()).trim();
+        String rol = (String) listRol.getSelectedItem();
+        
+        labelError.setVisible(true);
+        
+        if (nombre.isEmpty() || email.isEmpty() || rol.equalsIgnoreCase("selecciona tu rol")) {
+            JOptionPane.showMessageDialog(this, "Campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if(!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")){
+            labelError.setText("No se permite numero o simbolos especiales");
+            return ;
+        }
+        
+        if(!pass.isEmpty()){
+            if(pass.length()< 8 ){
+                labelError.setText("La contraseña de tener 8 o mas caracteres");
+                return ;
+            }
+        }
+ 
+        if(!email.matches("^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")){
+            labelError.setText("El email no es válido");
+            return;
+        }
+        // logica pora validar cada uno de  los inputs
         modificarUsuario();
     }//GEN-LAST:event_btnModificarActionPerformed
 
@@ -424,50 +446,74 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        Eliminar.setEnabled(false);
+        agregarButton.setEnabled(true);
+        btnModificar.setEnabled(false);
+        cancelButton.setEnabled(false);
+        LabelTitle.setVisible(false);
+        labelError.setVisible(false);
+        
+        
         idPersonaText.setText("");
         passwordText.setText("");
         emailText.setText("");
-        idRolText.setText("");
-        idPersonaDelete.setText("");
         nombreText.setText("");
+        
+        listRol.setSelectedIndex(0);
+        
+        
     }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void cancelDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelDeleteActionPerformed
-        // TODO add your handling code here:
-        idPersonaText.setText("");
-        passwordText.setText("");
-        emailText.setText("");
-        idRolText.setText("");
-        idPersonaDelete.setText("");
-        nombreText.setText("");
-    }//GEN-LAST:event_cancelDeleteActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        mostrarUsuarios();
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void agregarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarButtonActionPerformed
         // TODO add your handling code here:
         this.dispose();
-        AgregarUsuario frameActual = new AgregarUsuario();
+        AgregarUsuario frameActual = new AgregarUsuario(this.infoUsuarioActual);
         frameActual.setVisible(true);
     }//GEN-LAST:event_agregarButtonActionPerformed
 
     private void nombreTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreTextActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:   
     }//GEN-LAST:event_nombreTextActionPerformed
+
+    private void listRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listRolActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listRolActionPerformed
+
+    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
+        // TODO add your handling code here:
+        int filaSeleccionada = tablaUsuarios.getSelectedRow();
+        if(filaSeleccionada != -1){
+            String idPersona =(String) tablaUsuarios.getValueAt(filaSeleccionada,2);
+            String nombreUsuario = (String) tablaUsuarios.getValueAt(filaSeleccionada, 1);
+            String emailUsuario = (String) tablaUsuarios.getValueAt(filaSeleccionada,3);
+            String rol = (String) tablaUsuarios.getValueAt(filaSeleccionada,4);
+            
+            idPersonaText.setText(idPersona);
+            passwordText.setText("");
+            emailText.setText(emailUsuario);
+            nombreText.setText(nombreUsuario);
+            
+            LabelTitle.setVisible(true);
+            
+            Eliminar.setEnabled(true);
+            agregarButton.setEnabled(true);
+            btnModificar.setEnabled(true);
+            cancelButton.setEnabled(true);  
+            listRol.setSelectedItem(rol);
+            
+        }
+        
+    }//GEN-LAST:event_tablaUsuariosMouseClicked
     
     private void eliminarUsuario() {
-        String idPersona = idPersonaDelete.getText(); 
-
+        String idPersona = idPersonaText.getText();
+        labelError.setText(idPersona);
         if (idPersona.equals("")) {
             JOptionPane.showMessageDialog(this, "ID incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
             return; 
         }
 
         int intIdPersona = 0;
-        intIdPersona = Integer.parseInt(idPersona);
         
         try {
             intIdPersona = Integer.parseInt(idPersona);
@@ -518,33 +564,27 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
             }
         }
 
+         mostrarUsuarios();
         idPersonaText.setText("");
         passwordText.setText("");
         emailText.setText("");
-        idRolText.setText("");
-        idPersonaDelete.setText("");
         nombreText.setText("");
     }
 
 
     private void modificarUsuario() {
-        //obtener los campos de entrada
-        String nombre = nombreText.getText().trim();
+        //obtener los campos de entradas
+        String nombre = nombreText.getText();
         String idPersonaStr = idPersonaText.getText().trim();
         String email = emailText.getText().trim();
-        String idRolStr = idRolText.getText().trim();
+        String rol = (String) listRol.getSelectedItem(); // modificalo
         String contrasenia = new String(passwordText.getPassword()).trim();
-
-        if (nombre.isEmpty() || idPersonaStr.isEmpty() || email.isEmpty() || idRolStr.isEmpty() || contrasenia.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
+        int idRol = arrayRoles.indexOf(rol)+1;
+        
         String sql = "CALL actualizar_usuario(?, ?, ?, ?, ?)";//procedimiento
         
         //convertir estos campos a enteros
         int idPersona = Integer.parseInt(idPersonaStr);
-        int idRol = Integer.parseInt(idRolStr);
 
         try (Connection conexion = new ConexionBD().getConnection(); 
             
@@ -562,11 +602,20 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
             idPersonaText.setText("");
             passwordText.setText("");
             emailText.setText("");
-            idRolText.setText("");
-            idPersonaDelete.setText("");
             nombreText.setText("");
+            labelError.setText("");
+            
+            Eliminar.setEnabled(false);
+            agregarButton.setEnabled(true);
+            btnModificar.setEnabled(false);
+            cancelButton.setEnabled(false);
+            LabelTitle.setVisible(false);
+            labelError.setVisible(false);
+            
+            mostrarUsuarios();
 
         } catch (SQLException e) {
+            System.out.println("Error al modificar: "+e);
             JOptionPane.showMessageDialog(this, "Error al modificar el usuario", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Error en el formato", "Error", JOptionPane.ERROR_MESSAGE);
@@ -644,6 +693,8 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         modelRoles.addColumn("Nombre Rol");
 
         tablaRoles.setModel(modelRoles);
+        listRol.removeAllItems();
+        listRol.addItem("selecciona tu rol");
 
         try {
             //ejecutar y guardar en result set
@@ -655,6 +706,8 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
                 infoRoles[0] = resultSet.getString("ID_Rol");
                 infoRoles[1] = resultSet.getString("nombre_rol");
                 modelRoles.addRow(infoRoles);
+                listRol.addItem(infoRoles[1]);
+                arrayRoles.add(infoRoles[1]);
             }
 
             resultSet.close();
@@ -663,22 +716,18 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
         }
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Eliminar;
+    private javax.swing.JLabel LabelTitle;
     private javax.swing.JButton agregarButton;
     private javax.swing.JButton backButton;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton cancelDelete;
     private javax.swing.JTextField emailText;
-    private javax.swing.JTextField idPersonaDelete;
     private javax.swing.JTextField idPersonaText;
-    private javax.swing.JTextField idRolText;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -687,6 +736,8 @@ public class ModificacionUsuarios extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel labelError;
+    private javax.swing.JComboBox<String> listRol;
     private javax.swing.JTextField nombreText;
     private javax.swing.JPasswordField passwordText;
     private javax.swing.JTable tablaRoles;

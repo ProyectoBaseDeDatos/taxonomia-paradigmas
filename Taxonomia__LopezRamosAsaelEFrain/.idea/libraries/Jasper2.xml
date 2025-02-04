@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="Jasper2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jackson-core-2.17.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/commons-logging-1.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/stax2-api-4.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jackson-dataformat-xml-2.17.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jackson-databind-2.17.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/poi-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jackson-annotations-2.17.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jasperreports-pdf-7.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/jasperreports-7.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/commons-collections4-4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/xml-apis-ext-1.3.04.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/woodstox-core-asl-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Jasper/openpdf-1.3.26.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

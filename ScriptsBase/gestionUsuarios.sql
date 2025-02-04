@@ -35,11 +35,22 @@ BEGIN
         nombre = p_nombre 
     WHERE ID_Persona = p_id_persona;  
 
+    -- Actualizar la contraseña si se proporciona
+    IF p_contraseña IS NOT NULL AND LENGTH(p_contraseña) >= 8 THEN
     UPDATE usuario
     SET 
-        contraseña = p_contraseña,
-        email = p_email
-    WHERE id_persona = p_id_persona;  
+        contraseña = p_contraseña
+    WHERE id_persona = p_id_persona;
+END IF;
+
+
+    -- Actualizar el email si se proporciona
+    IF p_email IS NOT NULL THEN
+        UPDATE usuario
+        SET 
+            email = p_email
+        WHERE id_persona = p_id_persona;
+    END IF;
 
     -- Actualizar rol del trabajador
     UPDATE TRABAJADOR
@@ -48,6 +59,7 @@ BEGIN
 	
 END;
 $$;
+
 
 
 
@@ -167,6 +179,7 @@ $$
 
 
  --Obtener roles y personas
+DROP IF EXISTS FUNCTION obtener_roles();
 CREATE OR REPLACE FUNCTION obtener_roles()
 RETURNS TABLE (
     ID_Rol INTEGER,
@@ -181,7 +194,7 @@ $$ LANGUAGE plpgsql;
 
 
 --personas
-										CREATE OR REPLACE FUNCTION obtener_personas()
+CREATE OR REPLACE FUNCTION obtener_personas()
 RETURNS TABLE (
     ID_Persona INTEGER,
     nombre_persona TEXT
@@ -193,6 +206,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 --login
 DROP FUNCTION IF EXISTS iniciar_sesion;
 -- recibe correo y contraseña como parametros
@@ -228,10 +242,31 @@ $$
  LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS Obtener_metodosPreparacion();
+CREATE OR REPLACE FUNCTION Obtener_metodosPreparacion()
+RETURNS
+TABLE(
+    id_preparacion INTEGER,
+    descripcion_metodo TEXT
+) AS $$
+BEGIN
 
+    RETURN QUERY
+        SELECT ID_preparacion as id_preparacion, descripcion_metodo
+        FROM metodoDePrepacion;
 
+END;$$ LANGUAGE plpgsql;
 
-
+CREATE OR REPLACE FUNCTION get_personas_sin_rol()
+RETURNS TABLE (id_persona INTEGER, nombre TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.ID_Persona, p.nombre
+    FROM Persona p
+    LEFT JOIN TRABAJADOR t ON p.ID_Persona = t.ID_PERSONA
+    WHERE t.ID_PERSONA IS NULL;
+END;
+$$ LANGUAGE plpgsql;
 
 
 

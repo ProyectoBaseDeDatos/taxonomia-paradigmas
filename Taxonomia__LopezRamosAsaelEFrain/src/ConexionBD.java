@@ -14,7 +14,8 @@ import java.sql.SQLException;
 public class ConexionBD {
     private static final String URL = "jdbc:postgresql://localhost:5432/insectosScript";
     private static final String USER = "postgres"; 
-    private static final String PASSWORD = "novauniversitas";
+    //private static final String PASSWORD = "novauniversitas"; //contrasena de asael
+    private static final String PASSWORD ="postgres123"; // contrseña luis
 
     public static Connection getConnection() {
         try {
