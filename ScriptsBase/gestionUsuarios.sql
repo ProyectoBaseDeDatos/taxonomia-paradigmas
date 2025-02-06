@@ -269,6 +269,61 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+--eliminar persona
+CREATE OR REPLACE PROCEDURE eliminar_persona(
+    p_id_persona INTEGER  
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM persona WHERE persona.id_persona = p_id_persona;
+END;
+$$;
+
+--actualizar persona
+CREATE OR REPLACE PROCEDURE actualizar_persona(
+    p_nombre VARCHAR,
+    p_apellido_paterno VARCHAR,
+    p_apellido_materno VARCHAR,
+    p_edad INT,
+    p_telefono VARCHAR,
+    p_nacionalidad VARCHAR,
+    p_id_persona INT 
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE Persona
+    SET 
+        nombre = p_nombre, 
+        apellido_paterno = p_apellido_paterno,
+        apellido_maternos = p_apellido_materno,
+        edad = p_edad,
+        telefono = p_telefono,
+        nacionalidad = p_nacionalidad
+    WHERE id_persona = p_id_persona;
+END;
+$$;
+
+--crear una persona
+CREATE OR REPLACE PROCEDURE crear_persona(
+    p_nombre VARCHAR,
+    p_apellido_paterno VARCHAR,
+    p_apellido_materno VARCHAR,
+    p_edad INT,
+    p_telefono VARCHAR,
+    p_nacionalidad VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO Persona(nombre,apellido_paterno,apellido_maternos,edad,telefono,nacionalidad)
+    VALUES (p_nombre, p_apellido_paterno, p_apellido_materno, p_edad, p_telefono, p_nacionalidad);
+END;
+$$;
+
+
+
 
  
 --CALL crear_usuario(1, 'miContraseñaSegura123', 'usuario1@example.com', 2);
